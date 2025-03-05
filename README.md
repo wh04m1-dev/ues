@@ -1,8 +1,4 @@
-1. **Clone the project repository:**
-   ```bash
-   git clone https://github.com/CHANTHEA22/vcs_api.git
-   ```
-2. **Install Laravel dependencies:**
+1. **Install Laravel dependencies:**
     ```bash
     composer install
     ```
@@ -14,8 +10,8 @@
     ```bash
     php artisan key:generate
     ```
-5. **Run database migrations and seed data (if needed):**
+5. **Run database migrations:**
     ```bash
-    php artisan migrate --seed
+    php artisan migrate
     ```
 
