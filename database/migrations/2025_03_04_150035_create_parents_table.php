@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('mother_job')->nullable();
             $table->boolean('mother_alive')->default(true);
             $table->string('phonenumber', 20);
-
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->timestamps(); 
+            $table->foreign('user_id')->references('id')->on( 'users');
         });
     }
 

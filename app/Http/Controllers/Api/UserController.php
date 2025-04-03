@@ -19,11 +19,13 @@ class UserController extends Controller
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6',
         ]);
+        $roleId = 2; // Default role ID
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role_id' => $roleId
         ]);
 
         return response()->json([
