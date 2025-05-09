@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    // Register a new user
     public function register(Request $request)
     {
         $request->validate([
@@ -19,7 +18,7 @@ class UserController extends Controller
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6',
         ]);
-        $roleId = 2; // Default role ID
+        $roleId = 2;
 
         $user = User::create([
             'name' => $request->name,
@@ -34,7 +33,6 @@ class UserController extends Controller
         ], 201);
     }
 
-    // User login
     public function login(Request $request)
     {
         $request->validate([
@@ -59,7 +57,6 @@ class UserController extends Controller
         ]);
     }
 
-    // Get authenticated user details
     public function userProfile(Request $request)
     {
         return response()->json([
@@ -67,11 +64,9 @@ class UserController extends Controller
         ]);
     }
 
-    // Logout user
     public function logout(Request $request)
     {
         $request->user()->tokens()->delete();
         return response()->json(['message' => 'Logged out successfully']);
     }
 }
-

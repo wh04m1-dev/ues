@@ -11,9 +11,6 @@ class EducationController extends Controller
 {
     public function store(Request $request)
     {
-
-        
-
         $request->validate([
             'education_name' => 'required|string|max:255',
             'education_date' => 'nullable|date',
@@ -21,32 +18,31 @@ class EducationController extends Controller
             'education_grade' => 'nullable|string|max:255',
         ]);
 
-        $user_id =Auth::id();
+        $user_id = Auth::id();
         if (!$user_id) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-    
+
         $education = Education::create([
             'education_name' => $request->education_name,
             'education_date' => $request->education_date,
             'education_location' => $request->education_location,
             'education_grade' => $request->education_grade,
-            'user_id' => $user_id,  
+            'user_id' => $user_id,
         ]);
-    
+
         return response()->json([
             'message' => 'Education record created successfully!',
             'education' => $education
         ], 201);
     }
-    
-    public function index(){
+
+    public function index()
+    {
         $user_id = Auth::id();
         $education = Education::where('user_id', $user_id)->get();
         return response()->json([
             'education' => $education
         ]);
     }
-
-    
 }

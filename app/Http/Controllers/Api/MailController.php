@@ -11,7 +11,6 @@ use function Pest\Laravel\call;
 
 class MailController extends Controller
 {
-    //
     public function sendEmail(){
         try{
             $toEmailAddress = 'tityapong77@gmail.com';
