@@ -17,43 +17,24 @@ Route::get('/user', function (Request $request) {
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
+Route::get('/department', [DepartmentController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'userProfile']);
     Route::post('/logout', [UserController::class, 'logout']);
 
-//   Route for personal data
     Route::post('/personal', [PersonalController::class, 'store']);
     Route::get('/personal', [PersonalController::class, 'index']);
 
-    // Route for parent data 
     Route::get('/parents', [ParentsController::class, 'index']);
     Route::post('/parents', [ParentsController::class, 'store']);
 
-    //Rpute for education data 
     Route::post('education', [EducationController::class, 'store']);
     Route::get('education', [EducationController::class, 'index']);
 
-    // Route for register information 
     Route::get('information', [InformationRegisterController::class, 'index']);
     Route::post('information', [InformationRegisterController::class, 'store']);
 
-    Route::post('/department', [DepartmentController::class, 'store']);
-    Route::get('/department', [DepartmentController::class, 'index']);
-    Route::put('/department/{id}', [DepartmentController::class, 'update']);
-    Route::delete('/department/{id}', [DepartmentController::class, 'destroy']);
-
-
-
     Route::post('/exam', [ExamController::class, 'store']);
     Route::get('/exam', [ExamController::class, 'index']);
-
-
-
 });
-
-// Route::middleware(['auth:sanctum', 'admin'])->group(function () {
-//     Route::post('/department', [DepartmentController::class, 'store']);
-//     Route::put('/department/{id}', [DepartmentController::class, 'update']);
-//     Route::delete('/department/{id}', [DepartmentController::class, 'destroy']);
-// });
-
