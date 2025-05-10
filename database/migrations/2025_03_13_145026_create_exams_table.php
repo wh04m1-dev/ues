@@ -6,17 +6,14 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->unsignedTinyInteger('department_id'); // Foreign key referencing department
-            $table->date('exam_date'); // Exam date
-            $table->integer('duration'); // Exam duration (in minutes)
-            $table->integer('total_marks'); // Total marks for the exam
+            $table->unsignedTinyInteger('department_id');
+            $table->date('exam_date');
+            $table->integer('duration');
+            $table->integer('total_marks');
             $table->integer('passing_marks');
             $table->timestamps();
 
@@ -24,9 +21,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('exams');

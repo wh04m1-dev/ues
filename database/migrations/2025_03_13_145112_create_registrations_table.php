@@ -6,15 +6,12 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('registrations', function (Blueprint $table) {
             $table->id('id');
-            $table->unsignedBigInteger('user_id'); // Foreign key referencing user
-            $table->unsignedBigInteger('exam_id'); // Foreign key referencing exam
+            $table->unsignedBigInteger('user_id'); 
+            $table->unsignedBigInteger('exam_id');
     
             $table->timestamps();
 
@@ -24,9 +21,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('registrations');
