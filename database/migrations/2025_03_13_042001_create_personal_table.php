@@ -8,12 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('personal', function (Blueprint $table) {
-            $table->id('UniqueID');
+        Schema::create('personals', function (Blueprint $table) {
+            $table->id();
             $table->string('picture')->nullable(); 
             $table->string('certification')->nullable(); 
             $table->date('dob')->nullable(); 
-            $table->enum('gender', ['male', 'female', 'other'])->nullable(); 
+            $table->enum('gender', ['male', 'female'])->nullable(); 
             $table->text('address')->nullable(); 
             $table->string('phone')->nullable(); 
             $table->timestamps();

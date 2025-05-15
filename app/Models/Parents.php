@@ -6,17 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class Parents extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = [
-        'user_id', 
-        'fathername', 
+        'user_id',
+        'fathername',
         'job',
         'father_alive',
-        'mothername', 
+        'mothername',
         'mother_job',
         'mother_alive',
         'phonenumber',
     ];
-    //
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

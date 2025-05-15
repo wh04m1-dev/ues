@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->unsignedTinyInteger('department_id');
+            $table->unsignedBigInteger('department_id');
             $table->date('exam_date');
             $table->integer('duration');
             $table->integer('total_marks');

@@ -45,4 +45,48 @@ class EducationController extends Controller
             'education' => $education
         ]);
     }
+
+    public function update(Request $request, $id)
+    {
+        $education = Education::find($id);
+
+        if (!$education || $education->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Not found or unauthorized'], 404);
+        }
+
+        $request->validate([
+            'education_name' => 'required|string|max:255',
+            'education_date' => 'nullable|date',
+            'education_location' => 'nullable|string|max:255',
+            'education_grade' => 'nullable|string|max:255',
+        ]);
+
+        $education->update($request->only([
+            'education_name',
+            'education_date',
+            'education_location',
+            'education_grade'
+        ]));
+
+        return response()->json([
+            'message' => 'Education record updated successfully!',
+            'education' => $education
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $education = Education::find($id);
+
+        if (!$education || $education->user_id !== Auth::id()) {
+            return response()->json(['error' => 'Not found or unauthorized'], 404);
+        }
+
+        $education->delete();
+
+        return response()->json([
+            'message' => 'Education record deleted successfully!'
+        ]);
+    }
+
 }
