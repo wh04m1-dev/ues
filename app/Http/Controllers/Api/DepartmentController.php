@@ -12,13 +12,18 @@ class DepartmentController extends Controller
     public function store(Request $request)
     {
         if (Auth::user()->role_id !== 1) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return response()->json(
+                [
+                    'error' => 'Unauthorized'
+                ], 403);
         }
 
-        $request->validate([
+        $request->validate(
+            [
             'name' => 'required|unique:departments,name|max:255',
             'image' => 'nullable|mimes:jpeg,jpg,png|max:2048',
-        ]);
+        ]
+        );
 
         $department = new Department();
         $department->name = $request->name;
