@@ -22,11 +22,13 @@ class DepartmentController extends Controller
             [
             'name' => 'required|unique:departments,name|max:255',
             'image' => 'nullable|mimes:jpeg,jpg,png|max:2048',
+                'description' => 'nullable|max:255',
         ]
         );
 
         $department = new Department();
         $department->name = $request->name;
+        $department->description = $request->description;
         if ($request->hasFile('image')) {
             $department->image = $request->file('image')->store('departments', 'public');
         }
@@ -61,9 +63,11 @@ class DepartmentController extends Controller
         $request->validate([
             'name' => 'required|unique:departments,name,' . $id . '|max:255',
             'image' => 'nullable|mimes:jpeg,jpg,png|max:2048',
+            'description' => 'nullable|max:255',
         ]);
 
         $department->name = $request->name;
+        $department->description = $request->description;
 
         if ($request->hasFile('image')) {
             $department->image = $request->file('image')->store('departments', 'public');

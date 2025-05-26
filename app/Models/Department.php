@@ -8,7 +8,7 @@ class Department extends Model
 {
     public $timestamps = false;
     protected $table = "departments";
-    protected $fillable = ['name', 'image'];
+    protected $fillable = ['name', 'image', 'description'];
 
     public function exams()
     {
