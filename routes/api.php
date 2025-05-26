@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\ResultController;
 Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login']);
 
+Route::get('/departments', [DepartmentController::class, 'index']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/profile', [UserController::class, 'userProfile']);
     Route::post('/logout', [UserController::class, 'logout']);
@@ -29,7 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/personal/{id}', [PersonalController::class, 'update']);
     Route::delete('/personal/{id}', [PersonalController::class, 'destroy']);
 
-    Route::get('/departments', [DepartmentController::class, 'index']);
     Route::post('/departments', [DepartmentController::class, 'store']);
     Route::put('/departments/{id}', [DepartmentController::class, 'update']);
     Route::delete('/departments/{id}', [DepartmentController::class, 'destroy']);
