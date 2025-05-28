@@ -8,23 +8,26 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('parents', function (Blueprint $table) {
+        Schema::create('parent_details', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('registration_id');
+
             $table->string('fathername');
-            $table->string('job')->nullable();
+            $table->string('father_job')->nullable();
             $table->boolean('father_alive')->default(true);
+
             $table->string('mothername');
             $table->string('mother_job')->nullable();
             $table->boolean('mother_alive')->default(true);
-            $table->string('phonenumber', 20);
-            $table->timestamps(); 
-            $table->foreign('user_id')->references('id')->on( 'users');
+
+            $table->timestamps();
+
+            $table->foreign('registration_id')->references('id')->on('registrations')->onDelete('cascade');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('parents');
+        Schema::dropIfExists('parent_details');
     }
 };

@@ -4,15 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Education extends Model
+class EducationDetail extends Model
 {
-    //
-    protected $table = 'education';
     protected $fillable = [
+        'registration_id',
         'education_name',
         'education_date',
         'education_location',
         'education_grade',
-        'user_id'
     ];
+
+    public function registration()
+    {
+        return $this->belongsTo(Registration::class);
+    }
 }

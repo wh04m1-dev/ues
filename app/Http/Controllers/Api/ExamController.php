@@ -2,122 +2,63 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Exam;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ExamController extends Controller
 {
     public function index()
     {
-        $exams = Exam::with('department')->get();
-
-        return response()->json([
-            'message' => 'Exams retrieved successfully!',
-            'exams' => $exams->map(function ($exam) {
-                return [
-                    'id' => $exam->id,
-                    'department_id' => $exam->department_id,
-                    'department_name' => $exam->department->name ?? null,
-                    'exam_date' => $exam->exam_date,
-                    'duration' => $exam->duration,
-                    'total_marks' => $exam->total_marks,
-                    'passing_marks' => $exam->passing_marks,
-                    'created_at' => $exam->created_at,
-                    'updated_at' => $exam->updated_at,
-                ];
-            })
-        ]);
+        return response()->json(Exam::with('user')->get(), 200);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'department_id' => 'required|exists:departments,id',
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
             'exam_date' => 'required|date',
-            'duration' => 'required|integer',
             'total_marks' => 'required|integer',
-            'passing_marks' => 'required|integer',
+            'pass_status' => 'required|in:pass,fail'
         ]);
 
-        $exam = Exam::create($request->only([
-            'department_id',
-            'exam_date',
-            'duration',
-            'total_marks',
-            'passing_marks',
-        ]));
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
 
-        return response()->json([
-            'message' => 'Exam created successfully!',
-            'exam' => $exam
-        ], 201);
+        $exam = Exam::create($request->all());
+        return response()->json($exam, 201);
     }
 
     public function show($id)
     {
-        $exam = Exam::with('department')->find($id);
-
-        if (!$exam) {
-            return response()->json(['error' => 'Exam not found'], 404);
-        }
-
-        return response()->json([
-            'exam' => [
-                'id' => $exam->id,
-                'department_id' => $exam->department_id,
-                'department_name' => $exam->department->name ?? null,
-                'exam_date' => $exam->exam_date,
-                'duration' => $exam->duration,
-                'total_marks' => $exam->total_marks,
-                'passing_marks' => $exam->passing_marks,
-                'created_at' => $exam->created_at,
-                'updated_at' => $exam->updated_at,
-            ]
-        ]);
+        $exam = Exam::with('user')->findOrFail($id);
+        return response()->json($exam, 200);
     }
 
     public function update(Request $request, $id)
     {
-        $exam = Exam::find($id);
+        $exam = Exam::findOrFail($id);
 
-        if (!$exam) {
-            return response()->json(['error' => 'Exam not found'], 404);
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'exists:users,id',
+            'exam_date' => 'date',
+            'total_marks' => 'integer',
+            'pass_status' => 'in:pass,fail'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
-        $request->validate([
-            'department_id' => 'required|exists:departments,id',
-            'exam_date' => 'required|date',
-            'duration' => 'required|integer',
-            'total_marks' => 'required|integer',
-            'passing_marks' => 'required|integer',
-        ]);
-
-        $exam->update($request->only([
-            'department_id',
-            'exam_date',
-            'duration',
-            'total_marks',
-            'passing_marks',
-        ]));
-
-        return response()->json([
-            'message' => 'Exam updated successfully!',
-            'exam' => $exam
-        ]);
+        $exam->update($request->all());
+        return response()->json($exam, 200);
     }
 
     public function destroy($id)
     {
-        $exam = Exam::find($id);
-
-        if (!$exam) {
-            return response()->json(['error' => 'Exam not found'], 404);
-        }
-
-        $exam->delete();
-
-        return response()->json(['message' => 'Exam deleted successfully!']);
+        Exam::findOrFail($id)->delete();
+        return response()->json(null, 204);
     }
 }

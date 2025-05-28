@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-    public $timestamps = false;
     protected $table = "departments";
+
     protected $fillable = ['name', 'image', 'description'];
 
-    public function exams()
+    public function registrations()
     {
-        return $this->hasMany(Exam::class);
+        return $this->hasMany(Registration::class);
     }
 }

@@ -32,8 +32,8 @@ class User extends Authenticatable
         ];
     }
 
-    public function parent()
+    public function registrations()
     {
-        return $this->hasOne(Parent::class);
+        return $this->hasMany(Registration::class);
     }
 }

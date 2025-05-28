@@ -6,27 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Exam extends Model
 {
-    protected $table = 'exams';
     protected $fillable = [
-        'department_id',
-      
+        'user_id',
         'exam_date',
-        'duration',
         'total_marks',
-        'passing_marks',
+        'pass_status'
     ];
-    public function department()
-    {
-        return $this->belongsTo(Department::class);
-    }
 
-    public function registrations()
+    public function user()
     {
-        return $this->hasMany(Registration::class);
-    }
-
-    public function results()
-    {
-        return $this->hasMany(Result::class);
+        return $this->belongsTo(User::class);
     }
 }

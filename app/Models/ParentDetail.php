@@ -4,22 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Parents extends Model
+class ParentDetail extends Model
 {
     protected $fillable = [
-        'user_id',
+        'registration_id',
         'fathername',
-        'job',
+        'father_job',
         'father_alive',
         'mothername',
         'mother_job',
         'mother_alive',
-        'phonenumber',
     ];
 
-    public function user()
+    public function registration()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Registration::class);
     }
-
 }

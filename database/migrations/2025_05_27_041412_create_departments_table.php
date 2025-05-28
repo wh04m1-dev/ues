@@ -10,9 +10,10 @@ return new class extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->string('image')->nullable();
-            $table->text('description')->nullable();
+            $table->string('name');
+            $table->string('image');
+            $table->text('description');
+            $table->timestamps();
         });
     }
 

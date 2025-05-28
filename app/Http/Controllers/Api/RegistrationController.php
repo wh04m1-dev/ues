@@ -4,99 +4,123 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Registration;
-use App\Models\Exam;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class RegistrationController extends Controller
 {
-    // List all registrations for the authenticated user
     public function index()
     {
-        $user_id = Auth::id();
-        $registrations = Registration::with('exam')->where('user_id', $user_id)->get();
-
-        return response()->json([
-            'message' => 'Registrations retrieved successfully!',
-            'registrations' => $registrations->map(function ($registration) {
-                return [
-                    'id' => $registration->id,
-                    'exam_id' => $registration->exam_id,
-                    'exam_date' => $registration->exam->exam_date ?? null,
-                    'total_marks' => $registration->exam->total_marks ?? null,
-                    'registered_at' => $registration->created_at,
-                ];
-            })
-        ]);
+        $registrations = Registration::with(['personalDetail', 'parentDetail', 'educationDetail', 'user', 'department'])->get();
+        return response()->json($registrations, 200);
     }
 
-    // Store a new registration
     public function store(Request $request)
     {
-        $request->validate([
-            'exam_id' => 'required|exists:exams,id',
+        // Validate main request
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'department_id' => 'required|exists:departments,id',
+
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'gender' => 'in:male,female',
+            'phonenumber' => 'required',
+
+            'fathername' => 'required',
+            'mothername' => 'required',
+
+            'education_name' => 'required',
         ]);
 
-        $user_id = Auth::id();
-
-        // Prevent duplicate registration
-        $exists = Registration::where('user_id', $user_id)
-            ->where('exam_id', $request->exam_id)
-            ->exists();
-
-        if ($exists) {
-            return response()->json(['error' => 'You have already registered for this exam.'], 409);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
+        // Create registration
         $registration = Registration::create([
-            'user_id' => $user_id,
-            'exam_id' => $request->exam_id,
+            'user_id' => $request->user_id,
+            'department_id' => $request->department_id,
         ]);
 
-        return response()->json([
-            'message' => 'Registered successfully!',
-            'registration' => $registration
-        ], 201);
+        // Create related personal detail
+        $registration->personalDetail()->create($request->only([
+            'firstname',
+            'lastname',
+            'picture',
+            'gender',
+            'dob',
+            'address',
+            'phone',
+            'phonenumber'
+        ]));
+
+        // Create related parent detail
+        $registration->parentDetail()->create($request->only([
+            'fathername',
+            'father_job',
+            'father_alive',
+            'mothername',
+            'mother_job',
+            'mother_alive'
+        ]));
+
+        // Create related education detail
+        $registration->educationDetail()->create($request->only([
+            'education_name',
+            'education_date',
+            'education_location',
+            'education_grade'
+        ]));
+
+        return response()->json($registration->load(['personalDetail', 'parentDetail', 'educationDetail']), 201);
     }
 
-    // Delete a registration (unregister)
-    public function destroy($id)
+    public function show($id)
     {
-        $registration = Registration::find($id);
-
-        if (!$registration) {
-            return response()->json(['error' => 'Registration not found'], 404);
-        }
-
-        // Optional: only allow users to delete their own registration
-        if ($registration->user_id !== Auth::id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        $registration->delete();
-
-        return response()->json(['message' => 'Registration deleted successfully!']);
+        $registration = Registration::with(['personalDetail', 'parentDetail', 'educationDetail'])->findOrFail($id);
+        return response()->json($registration, 200);
     }
 
     public function update(Request $request, $id)
     {
-        $registration = Registration::find($id);
+        $registration = Registration::findOrFail($id);
+        $registration->update($request->only(['user_id', 'department_id']));
 
-        if (!$registration) {
-            return response()->json(['error' => 'Registration not found'], 404);
-        }
+        $registration->personalDetail->update($request->only([
+            'firstname',
+            'lastname',
+            'picture',
+            'gender',
+            'dob',
+            'address',
+            'phone',
+            'phonenumber'
+        ]));
 
-        $request->validate([
-            'exam_id' => 'required|exists:exams,id',
-        ]);
+        $registration->parentDetail->update($request->only([
+            'fathername',
+            'father_job',
+            'father_alive',
+            'mothername',
+            'mother_job',
+            'mother_alive'
+        ]));
 
-        $registration->exam_id = $request->exam_id;
-        $registration->save();
+        $registration->educationDetail->update($request->only([
+            'education_name',
+            'education_date',
+            'education_location',
+            'education_grade'
+        ]));
 
-        return response()->json([
-            'message' => 'Registration updated successfully!',
-            'registration' => $registration
-        ]);
+        return response()->json($registration->load(['personalDetail', 'parentDetail', 'educationDetail']), 200);
     }
 
+    public function destroy($id)
+    {
+        $registration = Registration::findOrFail($id);
+        $registration->delete(); // Related rows will cascade due to FK constraints
+        return response()->json(null, 204);
+    }
 }
