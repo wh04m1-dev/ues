@@ -9,6 +9,7 @@ class EducationDetail extends Model
     protected $fillable = [
         'registration_id',
         'education_name',
+        'education_image',
         'education_date',
         'education_location',
         'education_grade',

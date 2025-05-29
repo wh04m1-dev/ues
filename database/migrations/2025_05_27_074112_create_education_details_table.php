@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('education_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('registration_id');
-
+            $table->string('education_image');
             $table->string('education_name');
             $table->date('education_date')->nullable();
             $table->string('education_location')->nullable();
