@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Exam extends Model
 {
     protected $fillable = [
-        'user_id',
+        'registration_id',
         'exam_date',
         'total_marks',
         'pass_status'
     ];
 
-    public function user()
+    public function registration()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Registration::class);
     }
 }
