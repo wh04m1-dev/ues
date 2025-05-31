@@ -6,16 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 
 class RegistrationController extends Controller
 {
     public function index()
     {
-        $registrations = Registration::with(['personalDetail', 'parentDetail', 'educationDetail', 'user', 'department'])->get();
+        $userId = Auth::id();
 
-        // Append full image URLs
+        $registrations = Registration::with(['personalDetail', 'parentDetail', 'educationDetail', 'user', 'department'])
+            ->where('user_id', $userId)
+            ->get();
+
         foreach ($registrations as $registration) {
             if ($registration->personalDetail && $registration->personalDetail->picture) {
                 $registration->personalDetail->picture = asset('storage/' . $registration->personalDetail->picture);
@@ -105,7 +107,10 @@ class RegistrationController extends Controller
 
     public function show($id)
     {
-        $registration = Registration::with(['personalDetail', 'parentDetail', 'educationDetail', 'user', 'department'])->findOrFail($id);
+        $registration = Registration::with(['personalDetail', 'parentDetail', 'educationDetail', 'user', 'department'])
+            ->where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
         if ($registration->personalDetail && $registration->personalDetail->picture) {
             $registration->personalDetail->picture = asset('storage/' . $registration->personalDetail->picture);
@@ -120,7 +125,9 @@ class RegistrationController extends Controller
 
     public function update(Request $request, $id)
     {
-        $registration = Registration::findOrFail($id);
+        $registration = Registration::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
 
         $validator = Validator::make($request->all(), [
             'department_id'   => 'sometimes|exists:departments,id',
@@ -200,8 +207,12 @@ class RegistrationController extends Controller
 
     public function destroy($id)
     {
-        $registration = Registration::findOrFail($id);
+        $registration = Registration::where('id', $id)
+            ->where('user_id', Auth::id())
+            ->firstOrFail();
+
         $registration->delete();
+
         return response()->json(null, 204);
     }
 }
