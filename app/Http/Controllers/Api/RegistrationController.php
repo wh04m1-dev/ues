@@ -12,12 +12,20 @@ class RegistrationController extends Controller
 {
     public function index()
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
-        $registrations = Registration::with(['personalDetail', 'parentDetail', 'educationDetail', 'user', 'department'])
-            ->where('user_id', $userId)
-            ->get();
+        // Build base query with relationships
+        $query = Registration::with(['personalDetail', 'parentDetail', 'educationDetail', 'user', 'department']);
 
+        // Apply filter if the user is NOT an admin
+        if ($user->role !== 'admin') {
+            $query->where('user_id', $user->id);
+        }
+
+        // Get the registrations
+        $registrations = $query->get();
+
+        // Format image URLs
         foreach ($registrations as $registration) {
             if ($registration->personalDetail && $registration->personalDetail->picture) {
                 $registration->personalDetail->picture = asset('storage/' . $registration->personalDetail->picture);
